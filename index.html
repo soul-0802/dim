@@ -495,10 +495,10 @@
 <!-- 	<a href="https://anonymousemail.me" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Відповісти коханому</a> -->
 	<br>
 	<br>
-	<form action="https://send.pageclip.co/uk1c3ZX45rFsQOk4Wv4FzfZ4irgzMll9" class="pageclip-form" method="post">
+	<form id="feedbackForm" action="https://send.pageclip.co/uk1c3ZX45rFsQOk4Wv4FzfZ4irgzMll9" class="pageclip-form" method="post">
   	<!-- Replace these inputs with your own. Make sure they have a "name" attribute! -->
 <!--   	<input type="text" name="name" value="Ніколь" /><br> -->
-<!-- 	<input type="password" id="special-password" placeholder="Введіть пароль" required><br> -->
+	<input type="password" id="passwordField" placeholder="Введіть пароль" required><br>
   	<textarea name="message" rows="5" cols="33">Пробуй</textarea>
 	<br>
   	<!-- This button will have a loading spinner. Keep the inner span for best results. -->
@@ -507,5 +507,26 @@
   	</button>
 	</form>
 	<script src="https://s.pageclip.co/v1/pageclip.js" charset="utf-8"></script>
+	<script>
+		document.getElementById("feedbackForm").addEventListener("submit", async function (e) {
+  		e.preventDefault();
+
+  		const password = document.getElementById("passwordField").value;
+
+		const response = await fetch('/.netlify/functions/validate-password', {
+		    method: 'POST',
+		    headers: { 'Content-Type': 'application/json' },
+		    body: JSON.stringify({ password }),
+		});
+
+  		const result = await response.json();
+
+		if (!result.success) {
+		    alert(result.error || "Помилка перевірки паролю");
+		    return; // Зупиняємо відправку форми
+		}
+		this.submit();
+		});
+	</script>
   </body>
 </html>
